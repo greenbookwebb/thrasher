@@ -1,0 +1,46 @@
+/* styles.css */
+div {
+    text-align: center;
+    font-family: sans-serif;
+  }
+  
+  h1 {
+    font-weight: bold;
+  }
+  
+  p {
+    font-size: 1.2em;
+  }
+  
+  img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+  }
+  
+  .header-box {
+    
+    padding: 20px 0;
+    text-align: center;
+  }
+  body {
+    background: #e6e6e6;
+    padding: 20px;
+  }
+  .container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 20px;
+  }
+  
+  .box {
+    
+    background:  #ffffff;
+    border-radius: 25px;
+    padding: 20px;
+    color: rgb(9, 0, 0);
+    font-weight: bold;
+    text-align: center;
+  }
+
+  
