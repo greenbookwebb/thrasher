@@ -99,9 +99,6 @@ const WebSocketExample = () => {
 
 
     
-      axios.get('/api/server')
-        .then(response => console.log(response.data))
-        .catch(error => console.error(error));
     
     
   
