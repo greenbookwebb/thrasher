@@ -3,7 +3,7 @@
       {
         "src": "/api/server",
         "dest": "/api/server.js",
-        "timeout": 20
+        "timeout": 100
       }
     ]
   }
