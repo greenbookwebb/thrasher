@@ -95,11 +95,20 @@ const WebSocketExample = () => {
     socket.onopen = function(event) {
       console.log("WebSocket is open now.");
     socket.send(JSON.stringify( payload ));
+
+
+
+    
+      axios.get('/api/server')
+        .then(response => console.log(response.data))
+        .catch(error => console.error(error));
+    
+    
+  
+    
     };
-    fetch("/api/server")
-      .then((response) => console.log(response))
-      .then((data) => console.log("response from api",data))
-      .catch((error) => console.error(error));
+
+    
 
     socket.onmessage = function(event) {
       const parsedData = JSON.parse(event.data);
