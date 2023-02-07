@@ -2,7 +2,8 @@
     "routes": [
       {
         "src": "/api/server",
-        "dest": "/api/server.js"
+        "dest": "/api/server.js",
+        "timeout": 30
       }
     ]
   }
