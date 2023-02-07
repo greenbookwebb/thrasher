@@ -3,7 +3,7 @@ import './styles.css';
 import axios from 'axios';
 import ToggleSwitch from 'react-toggle-switch';
 import { initializeApp} from "firebase/app";
-import { getDatabase, ref, set } from "firebase/database";
+import { getDatabase, ref, set, child, get } from "firebase/database";
 
 
 
@@ -31,6 +31,10 @@ const WebSocketExample = () => {
   const [SydneyYoutube, setSydneyYoutube] = useState();
 
   const [BrisbaneSongRelationships, setBrisbaneSongRelationships] = useState();
+
+  const [BrisbanePlays, setBrisbanePlays] = useState({});
+  const [MelbournePlays, setMelbournePlays] = useState({});
+  const [SydneyPlays, setSydneyPlays] = useState({});
   
 
   const styles = {
@@ -70,16 +74,8 @@ const WebSocketExample = () => {
     };
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
-    console.log("app",app);
-    console.log("database",app);
+    const dbRef = ref(database);
 
-
-
-
-    
-
-
-    
     var _ = require('lodash');
     let youtubeUrl;
 
@@ -103,6 +99,12 @@ const WebSocketExample = () => {
 
     socket.onmessage = function(event) {
       const parsedData = JSON.parse(event.data);
+      fetch("/api/server")
+      .then((response) => response.json())
+      .then((data) => console.log("response from api",data))
+      .catch((error) => console.error(error));
+
+      
 
       const search = async (query) => {
         try {
@@ -123,6 +125,24 @@ const WebSocketExample = () => {
           const station = parsedData.data.stations[i].station;
           const currentTrack = parsedData.data.stations[i].currentTrack;
           set(ref(database, '4mmm_fm/' + currentTrack.dateUtc ), currentTrack);
+
+          get(child(dbRef, `4mmm_fm`)).then((snapshot) => {
+            if (snapshot.exists()) {
+              const filteredData = Object.values(snapshot.val()).filter(d => d.id === currentTrack.id);
+              console.log("Brisbane - The song was played at:", filteredData);
+
+              
+              console.log("Brisbane - # of times played", filteredData.length);
+              setBrisbanePlays(filteredData);
+            } else {
+              console.log("Brisbane - No data available for the specified song");
+              setBrisbanePlays();
+            }
+          }).catch((error) => {
+            console.error(error);
+          });
+          
+            
           
           
           
@@ -132,10 +152,11 @@ const WebSocketExample = () => {
           }})
           .then(response => {
             setBrisbaneLyrics(response.data.lyrics.replace(/\n/g, '<br>'));
-            console.log(response.data.lyrics);
+            console.log("Brisbane lyrics:",response.data.lyrics);
             
           })
           .catch(error => {
+            setBrisbaneLyrics();
             console.error("LYRICS", error);
           });
 
@@ -148,7 +169,6 @@ const WebSocketExample = () => {
             axios.get(`http://localhost:3000/song?q=${response.data.response.hits[0].result.id}`)
             .then(response => {
               console.log("song info",response.data.response.song);  setBrisbaneGenius(response.data.response.song);
-              console.log("song_relationships", response.data.response.song.song_relationships); setBrisbaneSongRelationships(response.data.response.song.song_relationships);
               var bris_text = '';
               
               var parseNode = function(node) {
@@ -166,7 +186,12 @@ const WebSocketExample = () => {
                 parseNode(node);
               });
               
-              setBrisbaneMeaning(bris_text);
+              
+                setBrisbaneMeaning(bris_text);
+
+                
+             
+              
 
               
               for (let item of response.data.response.song.media) {
@@ -175,7 +200,12 @@ const WebSocketExample = () => {
                   console.log(youtubeUrl);
                   const embedLink = youtubeUrl.replace("watch?v=", "embed/");
                   setBrisbaneYoutube(embedLink);
+                  break;
+                };
+                if (item.provider ===! "youtube") {
+                  setBrisbaneYoutube();
                 }
+                
 
 
               }
@@ -186,11 +216,13 @@ const WebSocketExample = () => {
             })
             .catch(error => {
               console.error("song meaning", error);
+              setBrisbaneMeaning();
             });
             
           })
           .catch(error => {
             console.error("search_query)bne", error);
+            setBrisbaneGenius({});
           });
           
         };
@@ -201,6 +233,20 @@ const WebSocketExample = () => {
           const currentTrack = parsedData.data.stations[i].currentTrack;
           set(ref(database, '3mmm_fm/' + currentTrack.dateUtc ), currentTrack);
 
+          get(child(dbRef, `3mmm_fm`)).then((snapshot) => {
+            if (snapshot.exists()) {
+              const filteredData = Object.values(snapshot.val()).filter(d => d.id === currentTrack.id);
+              console.log("Melbourne - The song was played at:", filteredData);
+              console.log("Melbourne - # of times played", filteredData.length);
+              setMelbournePlays(filteredData);
+            } else {
+              console.log("Melbourne - No data available for the specified song");
+              setMelbournePlays();
+            }
+          }).catch((error) => {
+            console.error(error);
+          });
+
           axios.get('http://localhost:3000/lyrics', { params: {
             artist: parsedData.data.stations[i].currentTrack.artistName,
             song: parsedData.data.stations[i].currentTrack.title
@@ -209,6 +255,7 @@ const WebSocketExample = () => {
            setLyricsMelbourne(response.data.lyrics.replace(/\n/g, '<br>'));
           })
           .catch(error => {
+            setLyricsMelbourne();
             //console.error("LYRICS", error);
           });
 
@@ -240,6 +287,8 @@ const WebSocketExample = () => {
               
               setMelbourneMeaning(melb_text);
 
+              
+
               for (let item of response.data.response.song.media) {
                 if (item.provider === "youtube") {
                   youtubeUrl = item.url;
@@ -270,22 +319,38 @@ const WebSocketExample = () => {
           const currentTrack = parsedData.data.stations[i].currentTrack;
           set(ref(database, '2mmm_fm/' + currentTrack.dateUtc ), currentTrack);
 
+          get(child(dbRef, `2mmm_fm`)).then((snapshot) => {
+            if (snapshot.exists()) {
+              const filteredData = Object.values(snapshot.val()).filter(d => d.id === currentTrack.id);
+              console.log("Sydney - The song was played at:", filteredData);
+              console.log("Sydney - # of times played", filteredData.length);
+              setSydneyPlays(filteredData);
+            } else {
+              console.log("Sydney - No data available for the specified song");
+              setSydneyPlays();
+            }
+          }).catch((error) => {
+            console.error(error);
+          });
+
           axios.get('http://localhost:3000/lyrics', { params: {
             artist: parsedData.data.stations[i].currentTrack.artistName,
             song: parsedData.data.stations[i].currentTrack.title
           }})
           .then(response => {
+            console.log("lyrics Sydney", response.data.lyrics );
              setLyricsSydney(response.data.lyrics.replace(/\n/g, '<br>'));
           })
           .catch(error => {
             console.error("LYRICS", error);
+            setLyricsSydney();
           });
 
           const search_query_syd = parsedData.data.stations[i].currentTrack.title.concat(" ", parsedData.data.stations[i].currentTrack.artistName);
           
           axios.get(`http://localhost:3000/search?q=${search_query_syd}`)
           .then(response => {
-            //console.log("search_query)bne",response.data.response.hits[0].result);
+            console.log("sydney search",response.data.response.hits[0].result);
 
             axios.get(`http://localhost:3000/song?q=${response.data.response.hits[0].result.id}`)
             .then(response => {
@@ -308,6 +373,8 @@ const WebSocketExample = () => {
               });
               
               setSydneyMeaning(syd_text);
+
+              
 
               for (let item of response.data.response.song.media) {
                 if (item.provider === "youtube") {
@@ -354,7 +421,7 @@ const WebSocketExample = () => {
     <button style={styles_1} onClick={toggleDarkMode}>
       {isLightMode ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
     </button>
-    <div></div>
+    
     <div  className="container">
     <div style={styles}  className="box">
     <div  className="header-box">
@@ -362,13 +429,17 @@ const WebSocketExample = () => {
     <img src="https://img.listnr.com/api/assets/mercury/9c3ecdec-73d9-44ac-b7fb-2a188a670bbc?width=320&height=320" />
     </div>
     <div className="header-box">
-    <p className="text">Current Track: {currentSongBrisbane.title}</p>
-    <p className="text">Artist: {currentSongBrisbane.artistName}</p>
-    <p className="text">Album: {currentSongBrisbane.albumName}</p>
-    <img src={currentSongBrisbane.imageUrl} className="album-cover" />
+    
+    
+    
 
     
-    <div>
+    
+    
+    
+
+
+    {currentSongBrisbane.title ? <div> <div>
       <iframe
         title="Video Player"
         width="500"
@@ -379,62 +450,36 @@ const WebSocketExample = () => {
         allowFullScreen
       ></iframe>
     </div>
-    
-    
-
-
-
-        <div>
-        <p className="text">Description: {BrisbaneMeaning}</p>
-    <p className="text">Release Date: {BrisbaneGenius.release_date_for_display}</p>
-    
-    
-    
-    
-        </div>
+        <p className="text">Current Track: {currentSongBrisbane.title}</p>
+    <p className="text">Artist: {currentSongBrisbane.artistName}</p>
+    <p className="text">Album: {currentSongBrisbane.albumName}</p>
+    <p className="text">Release Date: {BrisbaneGenius.release_date_for_display}</p> </div> : <div><h1>No song is currently playing.</h1></div>  }
         
-
-
-
     
     
     
     
 
-
-
+      
     
     </div>
-    <p dangerouslySetInnerHTML={{ __html: LyricsBrisbane }} />
-    
-    
-
-    
-    
-
-
-
-
+   
     
     </div>
-    
-
-    
-
-
-
+  
     <div style={styles} className="box">
     <div className="header-box">
     <h1 className="h1">Triple M Sydney 104.9</h1>
     <img src="https://img.listnr.com/api/assets/mercury/7afc965e-6c98-4c7a-97f9-9e72d95b08b1?width=320&height=320" />
     </div>
     <div className="header-box">
-    <p className="text">Current Track: {currentSongSydney.title}</p>
-    <p className="text">Artist: {currentSongSydney.artistName}</p>
-    <p className="text">Album: {currentSongSydney.albumName}</p>
-    <img src={currentSongSydney.imageUrl}  className="album-cover" />
     
-    <div>
+    
+    
+    
+    
+    
+    {currentSongSydney.title ? <div> <div>
       <iframe
         title="Video Player"
         width="500"
@@ -445,9 +490,11 @@ const WebSocketExample = () => {
         allowFullScreen
       ></iframe>
     </div>
+        <p className="text">Current Track: {currentSongSydney.title}</p>
+    <p className="text">Artist: {currentSongSydney.artistName}</p>
+    <p className="text">Album: {currentSongSydney.albumName}</p>
+    <p className="text">Release Date: {SydneyGenius.release_date_for_display}</p> </div> : <div><h1>No song is currently playing.</h1></div>  }
     
-    <p className="text">Release Date: {SydneyGenius.release_date_for_display}</p>
-    <p className="text">Description: {SydneyMeaning}</p>
     
     
     
@@ -456,7 +503,7 @@ const WebSocketExample = () => {
 
     
     </div>
-    <p dangerouslySetInnerHTML={{ __html: LyricsSydney }} />
+    
     </div>
 
     <div style={styles} className="box">
@@ -464,12 +511,14 @@ const WebSocketExample = () => {
     <h1 className="h1">Triple M Melbourne 105.1</h1>
     <img src="https://img.listnr.com/api/assets/mercury/593d5757-8d50-41ad-98e9-9c9d8b7cc53d?width=320&height=320" />
     </div><div className="header-box">
-    <p className="text">Current Track: {currentSongMelbourne.title}</p>
-    <p className="text">Artist: {currentSongMelbourne.artistName}</p>
-    <p className="text">Album: {currentSongMelbourne.albumName}</p>
-    <img src={currentSongMelbourne.imageUrl}  className="album-cover" />
+
     
-    <div>
+    
+    
+    
+    
+    
+    {currentSongMelbourne.title ? <div> <div>
       <iframe
         title="Video Player"
         width="500"
@@ -480,10 +529,11 @@ const WebSocketExample = () => {
         allowFullScreen
       ></iframe>
     </div>
+        <p className="text">Current Track: {currentSongMelbourne.title}</p>
+    <p className="text">Artist: {currentSongMelbourne.artistName}</p>
+    <p className="text">Album: {currentSongMelbourne.albumName}</p>
+    <p className="text">Release Date: {MelbourneGenius.release_date_for_display}</p> </div> : <div><h1>No song is currently playing.</h1></div>  }
     
-    
-    <p className="text">Release Date: {MelbourneGenius.release_date_for_display}</p>
-    <p className="text">Description: {MelbourneMeaning}</p>
     
     
     
@@ -492,12 +542,180 @@ const WebSocketExample = () => {
 
     
     </div>
-    <p dangerouslySetInnerHTML={{ __html: LyricsMelbourne }} />
+    
     
     </div>
     </div>
+    <div  className="container">
+    <div style={styles}  className="box">
+    <div  className="header-box">
+     </div>
+    <div className="header-box">
+    
+    <h1>Song Description</h1>
+    {currentSongBrisbane.title ?<div>
+    <img src={currentSongBrisbane.imageUrl} className="album-cover" /> </div> : <div></div>}
+
+    
+    
+    
+    
 
 
+
+        <div>
+        <p className="text">{BrisbaneMeaning}</p>
+    
+    
+    
+    
+    
+        </div>
+        
+
+    </div>
+    
+    
+    
+    </div>
+    
+
+    <div style={styles} className="box">
+    <div className="header-box">
+    </div>
+    <div className="header-box">
+    
+    
+    <h1>Song Description</h1>
+    {currentSongSydney.title ?<div>
+    <img src={currentSongSydney.imageUrl} className="album-cover" /> </div> : <div></div>}
+    
+    
+    
+    
+    <p className="text">{SydneyMeaning}</p>
+    
+    
+    
+    
+    
+
+    
+    </div>
+    
+    </div>
+
+    
+
+    <div style={styles} className="box">
+    <div className="header-box">
+    
+    </div><div className="header-box">
+    
+    
+    <h1>Song Description</h1>
+    {currentSongMelbourne.title ?<div>
+    <img src={currentSongMelbourne.imageUrl} className="album-cover" /> </div> : <div></div>}
+    
+    
+    
+    
+    
+    <p className="text">{MelbourneMeaning}</p>
+    
+    
+    
+    
+    
+
+    
+    </div>
+    
+    
+    </div>
+    </div>
+    <div  className="container">
+
+    <div style={styles}  className="box">
+    
+    <div className="header-box">
+    <h1 className="h1">Song Stats</h1>
+    
+    {BrisbanePlays.length > 0 ? (
+      
+    <div>
+      <p className="text"> This song has been played {BrisbanePlays.length} time/s since 06 Feb, 2023. </p>
+    {BrisbanePlays.map(({ dateUtc }) => (
+      <p className="text" key={dateUtc}> This song was played at: { new Date(Date.parse(dateUtc)).toLocaleString("en-US")}</p>
+    ))}
+  </div> ) : (<div></div>) }
+   
+  
+  
+
+    </div>
+    </div>
+
+    <div style={styles} className="box">
+    <div className="header-box">
+    <h1 className="h1">Song Stats</h1>
+    
+    {SydneyPlays.length > 0 ? (
+    <div>
+    <p className="text"> This song has been played {SydneyPlays.length} time since 06 Feb, 2023. </p>
+    {SydneyPlays.map(({ dateUtc }) => (
+      <p className="text" key={dateUtc}> This song was played at: { new Date(Date.parse(dateUtc)).toLocaleString("en-US")}</p>
+    ))}
+  </div> ) : <div></div> }
+
+    </div>
+    </div>
+
+    
+
+    <div style={styles} className="box">
+    <div className="header-box">
+    <h1 className="h1">Song Stats</h1>
+    
+    {MelbournePlays.length > 0 ? (
+    <div>
+      <p className="text"> This song has been played {MelbournePlays.length} time since 06 Feb, 2023. </p>
+    {MelbournePlays.map(({ dateUtc }) => (
+      <p className="text" key={dateUtc}> This song was played at: { new Date(Date.parse(dateUtc)).toLocaleString("en-US")}</p>
+    ))}
+  </div> ) : <div></div> }
+    
+    </div>
+    
+    
+    </div>
+    </div>
+    <div  className="container">
+    <div style={styles}  className="box">
+    <div  className="header-box">
+    <h1>Lyrics</h1>
+    <p dangerouslySetInnerHTML={{ __html: LyricsBrisbane }} />
+    </div>
+
+    </div>
+    
+
+    <div style={styles} className="box">
+    <div className="header-box">
+    <h1>Lyrics</h1>
+    <p dangerouslySetInnerHTML={{ __html: LyricsSydney }} />
+    </div>
+
+    
+    </div>
+
+    <div style={styles} className="box">
+    <div className="header-box">
+    <h1>Lyrics</h1>
+    <p dangerouslySetInnerHTML={{ __html: LyricsMelbourne }} />   
+    </div>
+    </div>
+    </div>
 </>
   );
 };
