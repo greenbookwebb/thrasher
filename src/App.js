@@ -100,7 +100,7 @@ const WebSocketExample = () => {
     socket.onmessage = function(event) {
       const parsedData = JSON.parse(event.data);
       fetch("/api/server")
-      .then((response) => response.json())
+      .then((response) => console.log(response))
       .then((data) => console.log("response from api",data))
       .catch((error) => console.error(error));
 
