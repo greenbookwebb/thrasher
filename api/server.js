@@ -1,9 +1,8 @@
 const { spawn } = require("child_process");
 const server = spawn("node", ["server.js"]);
 
-module.exports = async (event, context) => {
+exports.handler = async (event, context) => {
   return {
-    statusCode: 200,
-    body: JSON.stringify({ message: "Server running" }),
+    body: JSON.stringify({ message: "Server Running"}),
   };
 };
