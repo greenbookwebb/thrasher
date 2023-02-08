@@ -38,14 +38,14 @@ const WebSocketExample = () => {
   const [SydneyPlays, setSydneyPlays] = useState({});
 
   async function getName() {
-    const { data } = await axios.get('api/hello');
+    const { data } = await axios.get('/api/hello');
     console.log(data);
     return data;
   };
   getName();
 
   async function callSearchFunction(q) {
-    const response = await axios.get('api/search', {
+    const response = await axios.get('/api/search', {
       params: {
         q
       }
