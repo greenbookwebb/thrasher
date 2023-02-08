@@ -44,15 +44,17 @@ const WebSocketExample = () => {
   };
   getName();
 
-  app.get('/api/search', async (req, res) => {
+  async function callSearchFunction(q) {
+    const response = await axios.get('/api/search', {
+      
+      params: {
+        q
+      }
+    });
+    console.log(response.data);
+  }
   
-    try {
-      const data = await search("Bruce Springsteen Dancing in the Dark");
-      res.send(data);
-    } catch (error) {
-      res.status(500).send(error);
-    }
-  });
+  callSearchFunction('Bruce Springsteen');
   
 
   const styles = {
