@@ -46,7 +46,7 @@ const WebSocketExample = () => {
 
 
   let lastRequestTime = 0;
-  const minTimeBetweenRequests = 10000; // time in milliseconds
+  const minTimeBetweenRequests = 100000; // time in milliseconds
 
   async function callSearchFunction(q) {
     const currentTime = Date.now();
