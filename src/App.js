@@ -44,7 +44,7 @@ const WebSocketExample = () => {
   };
   getName();
 
-  app.get('/search', async (req, res) => {
+  app.get('/api/search', async (req, res) => {
   
     try {
       const data = await search("Bruce Springsteen Dancing in the Dark");
