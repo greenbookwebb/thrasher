@@ -53,7 +53,7 @@ const WebSocketExample = () => {
     console.log(response.data);
   }
   
-  callSearchFunction('Bruce Springsteen');
+  
   
 
   const styles = {
@@ -114,6 +114,7 @@ const WebSocketExample = () => {
     socket.onopen = function(event) {
       console.log("WebSocket is open now.");
     socket.send(JSON.stringify( payload ));
+    callSearchFunction('Bruce Springsteen');
 
 
 
