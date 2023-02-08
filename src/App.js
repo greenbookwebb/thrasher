@@ -64,7 +64,7 @@ const WebSocketExample = () => {
       });
       console.log(response.data);
     }  catch (error) {
-      console.error(error);
+      console.error("ERROR for callsearchfunction", error);
     }
   };
     
