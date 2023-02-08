@@ -4,6 +4,7 @@ import axios from 'axios';
 import ToggleSwitch from 'react-toggle-switch';
 import { initializeApp} from "firebase/app";
 import { getDatabase, ref, set, child, get } from "firebase/database";
+import createProxyMiddleware from 'http-proxy-middleware';
 
 
 
@@ -45,28 +46,18 @@ const WebSocketExample = () => {
   getName();
 
 
-  let lastRequestTime = 0;
-  const minTimeBetweenRequests = 100000; // time in milliseconds
-
-  async function callSearchFunction(q) {
-    const currentTime = Date.now();
-    if (currentTime - lastRequestTime < minTimeBetweenRequests) {
-      console.log("Too many requests, waiting...");
-      return;
-    }
-
-    lastRequestTime = currentTime;
-    try {
-      const response = await axios.get('/api/search', {
-        params: {
-          q
-        }
-      });
-      console.log(response.data);
-    }  catch (error) {
-      console.error("ERROR for callsearchfunction", error);
-    }
-  };
+  const proxy = createProxyMiddleware({
+    target: 'https://api.genius.com',
+    changeOrigin: true,
+  });
+  
+  const instance = axios.create({
+    proxy,
+  });
+  
+  instance.get('/api/search?q=eminem').then(response => {
+    console.log(response.data);
+  });
     
   
   
