@@ -114,7 +114,7 @@ const WebSocketExample = () => {
     socket.onopen = function(event) {
       console.log("WebSocket is open now.");
     socket.send(JSON.stringify( payload ));
-    callSearchFunction('Bruce Springsteen');
+    
 
 
 
@@ -129,6 +129,7 @@ const WebSocketExample = () => {
 
     socket.onmessage = function(event) {
       const parsedData = JSON.parse(event.data);
+      callSearchFunction('Bruce Springsteen');
       
 
       
