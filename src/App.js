@@ -4,6 +4,7 @@ import axios from 'axios';
 import ToggleSwitch from 'react-toggle-switch';
 import { initializeApp} from "firebase/app";
 import { getDatabase, ref, set, child, get } from "firebase/database";
+import search from './api/search';
 
 
 
@@ -42,6 +43,16 @@ const WebSocketExample = () => {
     return data;
   };
   getName();
+
+  app.get('/search', async (req, res) => {
+  
+    try {
+      const data = await search("Bruce Springsteen Dancing in the Dark");
+      res.send(data);
+    } catch (error) {
+      res.status(500).send(error);
+    }
+  });
   
 
   const styles = {
