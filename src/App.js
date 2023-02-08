@@ -44,14 +44,30 @@ const WebSocketExample = () => {
   };
   getName();
 
+
+  let lastRequestTime = 0;
+  const minTimeBetweenRequests = 10000; // time in milliseconds
+
   async function callSearchFunction(q) {
-    const response = await axios.get('/api/search', {
-      params: {
-        q
-      }
-    });
-    console.log(response.data);
-  }
+    const currentTime = Date.now();
+    if (currentTime - lastRequestTime < minTimeBetweenRequests) {
+      console.log("Too many requests, waiting...");
+      return;
+    }
+
+    lastRequestTime = currentTime;
+    try {
+      const response = await axios.get('/api/search', {
+        params: {
+          q
+        }
+      });
+      console.log(response.data);
+    }  catch (error) {
+      console.error(error);
+    }
+  };
+    
   
   
   
