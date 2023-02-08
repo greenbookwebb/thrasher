@@ -35,6 +35,13 @@ const WebSocketExample = () => {
   const [BrisbanePlays, setBrisbanePlays] = useState({});
   const [MelbournePlays, setMelbournePlays] = useState({});
   const [SydneyPlays, setSydneyPlays] = useState({});
+
+  async function getName() {
+    const { data } = await axios.get('/api/hello');
+    console.log(data);
+    return data;
+  };
+  getName();
   
 
   const styles = {
