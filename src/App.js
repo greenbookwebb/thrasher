@@ -4,7 +4,7 @@ import axios from 'axios';
 import ToggleSwitch from 'react-toggle-switch';
 import { initializeApp} from "firebase/app";
 import { getDatabase, ref, set, child, get } from "firebase/database";
-import search from './api/search';
+
 
 
 
@@ -38,14 +38,14 @@ const WebSocketExample = () => {
   const [SydneyPlays, setSydneyPlays] = useState({});
 
   async function getName() {
-    const { data } = await axios.get('/api/hello');
+    const { data } = await axios.get('./hello');
     console.log(data);
     return data;
   };
   getName();
 
   async function callSearchFunction(q) {
-    const response = await axios.get('/api/search', {
+    const response = await axios.get('./search', {
       
       params: {
         q

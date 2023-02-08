@@ -4,7 +4,7 @@ const accessToken = 'cojH8jQqn4cF36PceSsnXySHxnoR9h1FDOmI-ACXHY4SBn5tWhEfiqIO_iz
 
 const apiUrl = 'https://api.genius.com/search?q=';
 
-export default async function search(q) {
+export default async function handler(q) {
   const url = apiUrl + q;
 
   try {
