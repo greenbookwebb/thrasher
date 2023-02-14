@@ -121,7 +121,8 @@ const WebSocketExample = () => {
 
       const search = async (query) => {
         try {
-          const response = await axios.get(`http://localhost:3000/search?q=${query}`);
+          const response = await axios.get(`/api/search?q=${query}`);
+          console.log("response", response)
           return response;
         } catch (error) {
           console.error(error);
@@ -159,12 +160,13 @@ const WebSocketExample = () => {
           
           
           
-          axios.get('http://localhost:3000/lyrics', { params: {
+          axios.get('/api/lyrics', { params: {
             artist: parsedData.data.stations[i].currentTrack.artistName,
             song: parsedData.data.stations[i].currentTrack.title
           }})
           .then(response => {
-            setBrisbaneLyrics(response.data.lyrics.replace(/\n/g, '<br>'));
+            console.log("brisbane lyrics", response);
+            setBrisbaneLyrics(response.data.lyrics.lyrics.replace(/\n/g, '<br>'));
             console.log("Brisbane lyrics:",response.data.lyrics);
             
           })
@@ -175,11 +177,11 @@ const WebSocketExample = () => {
 
           const search_query_bne = parsedData.data.stations[i].currentTrack.title.concat(" ", parsedData.data.stations[i].currentTrack.artistName);
           
-          axios.get(`http://localhost:3000/search?q=${search_query_bne}`)
+          axios.get(`/api/search?q=${search_query_bne}`)
           .then(response => {
             //console.log("search_query)bne",response.data.response.hits[0].result);
 
-            axios.get(`http://localhost:3000/song?q=${response.data.response.hits[0].result.id}`)
+            axios.get(`/api/song?q=${response.data.response.hits[0].result.id}`)
             .then(response => {
               console.log("song info",response.data.response.song);  setBrisbaneGenius(response.data.response.song);
               var bris_text = '';
@@ -260,12 +262,12 @@ const WebSocketExample = () => {
             console.error(error);
           });
 
-          axios.get('http://localhost:3000/lyrics', { params: {
+          axios.get('/api/lyrics', { params: {
             artist: parsedData.data.stations[i].currentTrack.artistName,
             song: parsedData.data.stations[i].currentTrack.title
           }})
           .then(response => {
-           setLyricsMelbourne(response.data.lyrics.replace(/\n/g, '<br>'));
+           setLyricsMelbourne(response.data.lyrics.lyrics.replace(/\n/g, '<br>'));
           })
           .catch(error => {
             setLyricsMelbourne();
@@ -274,11 +276,11 @@ const WebSocketExample = () => {
 
           const search_query_mel = parsedData.data.stations[i].currentTrack.title.concat(" ", parsedData.data.stations[i].currentTrack.artistName);
           
-          axios.get(`http://localhost:3000/search?q=${search_query_mel}`)
+          axios.get(`/api/search?q=${search_query_mel}`)
           .then(response => {
             //console.log("search_query)bne",response.data.response.hits[0].result);
 
-            axios.get(`http://localhost:3000/song?q=${response.data.response.hits[0].result.id}`)
+            axios.get(`/api/song?q=${response.data.response.hits[0].result.id}`)
             .then(response => {
               console.log("song info",response.data.response.song);  setMelbourneGenius(response.data.response.song);
 
@@ -346,13 +348,13 @@ const WebSocketExample = () => {
             console.error(error);
           });
 
-          axios.get('http://localhost:3000/lyrics', { params: {
+          axios.get('/api/lyrics', { params: {
             artist: parsedData.data.stations[i].currentTrack.artistName,
             song: parsedData.data.stations[i].currentTrack.title
           }})
           .then(response => {
             console.log("lyrics Sydney", response.data.lyrics );
-             setLyricsSydney(response.data.lyrics.replace(/\n/g, '<br>'));
+             setLyricsSydney(response.data.lyrics.lyrics.replace(/\n/g, '<br>'));
           })
           .catch(error => {
             console.error("LYRICS", error);
@@ -361,11 +363,11 @@ const WebSocketExample = () => {
 
           const search_query_syd = parsedData.data.stations[i].currentTrack.title.concat(" ", parsedData.data.stations[i].currentTrack.artistName);
           
-          axios.get(`http://localhost:3000/search?q=${search_query_syd}`)
+          axios.get(`/api/search?q=${search_query_syd}`)
           .then(response => {
             console.log("sydney search",response.data.response.hits[0].result);
 
-            axios.get(`http://localhost:3000/song?q=${response.data.response.hits[0].result.id}`)
+            axios.get(`/api/song?q=${response.data.response.hits[0].result.id}`)
             .then(response => {
               console.log("song info",response.data.response.song);  setSydneyGenius(response.data.response.song);
               var syd_text = '';
