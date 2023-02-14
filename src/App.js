@@ -213,7 +213,7 @@ const WebSocketExample = () => {
                 if (item.provider === "youtube") {
                   youtubeUrl = item.url;
                   console.log(youtubeUrl);
-                  const embedLink = youtubeUrl.replace("watch?v=", "embed/");
+                  let embedLink = youtubeUrl.replace("watch?v=", "embed/");
                   embedLink = embedLink.replace("http", "https");
                   //console.log("Brisbane embedLink", embedLink);
                   setBrisbaneYoutube(embedLink);
@@ -310,7 +310,7 @@ const WebSocketExample = () => {
                 if (item.provider === "youtube") {
                   youtubeUrl = item.url;
                   console.log(youtubeUrl);
-                  const embedLink = youtubeUrl.replace("watch?v=", "embed/");
+                  let embedLink = youtubeUrl.replace("watch?v=", "embed/");
                   embedLink = embedLink.replace("http", "https");
                   //console.log("Melb embedLink", embedLink);
                   setMelbourneYoutube(embedLink);
@@ -399,7 +399,7 @@ const WebSocketExample = () => {
                 if (item.provider === "youtube") {
                   youtubeUrl = item.url;
                   console.log(youtubeUrl);
-                  const embedLink = youtubeUrl.replace("watch?v=", "embed/");
+                  let embedLink = youtubeUrl.replace("watch?v=", "embed/");
                   embedLink = embedLink.replace("http", "https");
                   //console.log("syd embedLink", embedLink);
                   setSydneyYoutube(embedLink);
