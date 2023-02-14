@@ -5,9 +5,6 @@ import ToggleSwitch from 'react-toggle-switch';
 import { initializeApp} from "firebase/app";
 import { getDatabase, ref, set, child, get } from "firebase/database";
 
-
-
-
 const WebSocketExample = () => {
   const [isLightMode, setIsLightMode] = useState(true);
 
@@ -585,9 +582,17 @@ const WebSocketExample = () => {
 
   return (
     <>
+    <div>
     <button style={styles_1} onClick={toggleDarkMode}>
       {isLightMode ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
-    </button>
+    </button></div>
+    
+    <div style={styles}  className="box">
+      <h1>Thrasher!</h1>
+      <h2>Thrasher is a website that is designed to be the one-stop spot to see what songs Triple M is currently Thrashing across the east coast! </h2>
+      <h2>Below you'll see the songs which Triple M is currently thrashing.</h2>
+      <h2>At the bottom of the page, you'll see the leaderboard as to the Artists which have been the most Thrashed since February, 2023!</h2>
+    </div>
     
     <div  className="container">
     <div style={styles}  className="box">
