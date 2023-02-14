@@ -37,6 +37,13 @@ const WebSocketExample = () => {
   const [MelbournePlays, setMelbournePlays] = useState({});
   const [SydneyPlays, setSydneyPlays] = useState({});
 
+  const [BrisbaneArtistPlays, setBrisbaneArtistPlays] = useState({});
+  const [MelbourneArtistPlays, setMelbourneArtistPlays] = useState({});
+  const [SydneyArtistPlays, setSydneyArtistPlays] = useState({});
+
+  const [BrisbaneArtistLeaderboard, setBrisbaneArtistLeaderboard] = useState({});
+  const [MelbourneArtistLeaderboard, setMelbourneArtistLeaderboard] = useState({});
+  const [SydneyArtistLeaderboard, setSydneyArtistLeaderboard] = useState({});
   
   
   
@@ -99,25 +106,83 @@ const WebSocketExample = () => {
     socket.onopen = function(event) {
       console.log("WebSocket is open now.");
     socket.send(JSON.stringify( payload ));
-    
+
+    get(child(dbRef, `4mmm_fm`)).then((snapshot) => {
+      if (snapshot.exists()) {
+        let a = Object.values(snapshot.val());
+        let artistCounts = {};
+        a.forEach(item => {
+          let artist = item.artistName;
+          artistCounts[artist] = artistCounts[artist] ? artistCounts[artist] + 1 : 1;
+        });
+
+        let sortedArtists = Object.keys(artistCounts)
+        .map(artist => ({ name: artist, count: artistCounts[artist] }))
+        .sort((a, b) => b.count - a.count);
+
+        setBrisbaneArtistLeaderboard(sortedArtists);
+        
+      } else {
+        
+      }
+    }).catch((error) => {
+      console.error(error);
+    });
+
+    get(child(dbRef, `3mmm_fm`)).then((snapshot) => {
+      if (snapshot.exists()) {
+        let a = Object.values(snapshot.val());
+        let artistCounts = {};
+        a.forEach(item => {
+          let artist = item.artistName;
+          artistCounts[artist] = artistCounts[artist] ? artistCounts[artist] + 1 : 1;
+        });
+
+        let sortedArtists = Object.keys(artistCounts)
+        .map(artist => ({ name: artist, count: artistCounts[artist] }))
+        .sort((a, b) => b.count - a.count);
+
+        setMelbourneArtistLeaderboard(sortedArtists);
+        
+      } else {
+        
+      }
+    }).catch((error) => {
+      console.error(error);
+    });
+
+    get(child(dbRef, `2mmm_fm`)).then((snapshot) => {
+      if (snapshot.exists()) {
+        let a = Object.values(snapshot.val());
+        let artistCounts = {};
+        a.forEach(item => {
+          let artist = item.artistName;
+          artistCounts[artist] = artistCounts[artist] ? artistCounts[artist] + 1 : 1;
+        });
+
+        let sortedArtists = Object.keys(artistCounts)
+        .map(artist => ({ name: artist, count: artistCounts[artist] }))
+        .sort((a, b) => b.count - a.count);
+
+        setSydneyArtistLeaderboard(sortedArtists);
+        
+      } else {
+        
+      }
+    }).catch((error) => {
+      console.error(error);
+    });
 
 
 
     
-    
-    
-  
-    
+
     };
 
-    
 
     socket.onmessage = function(event) {
       const parsedData = JSON.parse(event.data);
-     
-      
 
-      
 
       const search = async (query) => {
         try {
@@ -138,14 +203,17 @@ const WebSocketExample = () => {
           //console.log("parsedData.data.stations[i].currentTrack", parsedData.data.stations[i].currentTrack);
           const station = parsedData.data.stations[i].station;
           const currentTrack = parsedData.data.stations[i].currentTrack;
-          set(ref(database, '4mmm_fm/' + currentTrack.dateUtc ), currentTrack);
+          set(ref(database, '4mmm_fm/' + currentTrack.dateUtc), currentTrack);
 
           get(child(dbRef, `4mmm_fm`)).then((snapshot) => {
             if (snapshot.exists()) {
+              const filteredDataArtist = Object.values(snapshot.val()).filter(d => d.artistName === currentTrack.artistName);
+              console.log("Brisbane - Artist", filteredDataArtist);
+              setBrisbaneArtistPlays(filteredDataArtist);
+
+
               const filteredData = Object.values(snapshot.val()).filter(d => d.id === currentTrack.id);
               console.log("Brisbane - The song was played at:", filteredData);
-
-              
               console.log("Brisbane - # of times played", filteredData.length);
               setBrisbanePlays(filteredData);
             } else {
@@ -155,11 +223,30 @@ const WebSocketExample = () => {
           }).catch((error) => {
             console.error(error);
           });
+
+          get(child(dbRef, `4mmm_fm`)).then((snapshot) => {
+            if (snapshot.exists()) {
+              let a = Object.values(snapshot.val());
+              let artistCounts = {};
+              a.forEach(item => {
+                let artist = item.artistName;
+                artistCounts[artist] = artistCounts[artist] ? artistCounts[artist] + 1 : 1;
+              });
+    
+              let sortedArtists = Object.keys(artistCounts)
+              .map(artist => ({ name: artist, count: artistCounts[artist] }))
+              .sort((a, b) => b.count - a.count);
+    
+              setBrisbaneArtistLeaderboard(sortedArtists);
+              
+            } else {
+              
+            }
+          }).catch((error) => {
+            console.error(error);
+          });
           
-            
-          
-          
-          
+
           axios.get('/api/lyrics', { params: {
             artist: parsedData.data.stations[i].currentTrack.artistName,
             song: parsedData.data.stations[i].currentTrack.title
@@ -252,6 +339,12 @@ const WebSocketExample = () => {
 
           get(child(dbRef, `3mmm_fm`)).then((snapshot) => {
             if (snapshot.exists()) {
+              const filteredDataArtist = Object.values(snapshot.val()).filter(d => d.artistName === currentTrack.artistName);
+              console.log("Melbourne - Artist", filteredDataArtist);
+              setMelbourneArtistPlays(filteredDataArtist);
+
+
+
               const filteredData = Object.values(snapshot.val()).filter(d => d.id === currentTrack.id);
               console.log("Melbourne - The song was played at:", filteredData);
               console.log("Melbourne - # of times played", filteredData.length);
@@ -259,6 +352,28 @@ const WebSocketExample = () => {
             } else {
               console.log("Melbourne - No data available for the specified song");
               setMelbournePlays();
+            }
+          }).catch((error) => {
+            console.error(error);
+          });
+
+          get(child(dbRef, `3mmm_fm`)).then((snapshot) => {
+            if (snapshot.exists()) {
+              let a = Object.values(snapshot.val());
+              let artistCounts = {};
+              a.forEach(item => {
+                let artist = item.artistName;
+                artistCounts[artist] = artistCounts[artist] ? artistCounts[artist] + 1 : 1;
+              });
+    
+              let sortedArtists = Object.keys(artistCounts)
+              .map(artist => ({ name: artist, count: artistCounts[artist] }))
+              .sort((a, b) => b.count - a.count);
+    
+              setMelbourneArtistLeaderboard(sortedArtists);
+              
+            } else {
+              
             }
           }).catch((error) => {
             console.error(error);
@@ -340,6 +455,15 @@ const WebSocketExample = () => {
 
           get(child(dbRef, `2mmm_fm`)).then((snapshot) => {
             if (snapshot.exists()) {
+              const filteredDataArtist = Object.values(snapshot.val()).filter(d => d.artistName === currentTrack.artistName);
+              console.log("Sydney - Artist", filteredDataArtist);
+              setSydneyArtistPlays(filteredDataArtist);
+          
+          
+
+
+
+
               const filteredData = Object.values(snapshot.val()).filter(d => d.id === currentTrack.id);
               console.log("Sydney - The song was played at:", filteredData);
               console.log("Sydney - # of times played", filteredData.length);
@@ -347,6 +471,28 @@ const WebSocketExample = () => {
             } else {
               console.log("Sydney - No data available for the specified song");
               setSydneyPlays();
+            }
+          }).catch((error) => {
+            console.error(error);
+          });
+
+          get(child(dbRef, `2mmm_fm`)).then((snapshot) => {
+            if (snapshot.exists()) {
+              let a = Object.values(snapshot.val());
+              let artistCounts = {};
+              a.forEach(item => {
+                let artist = item.artistName;
+                artistCounts[artist] = artistCounts[artist] ? artistCounts[artist] + 1 : 1;
+              });
+    
+              let sortedArtists = Object.keys(artistCounts)
+              .map(artist => ({ name: artist, count: artistCounts[artist] }))
+              .sort((a, b) => b.count - a.count);
+    
+              setSydneyArtistLeaderboard(sortedArtists);
+              
+            } else {
+              
             }
           }).catch((error) => {
             console.error(error);
@@ -666,10 +812,17 @@ const WebSocketExample = () => {
       
     <div>
       <p className="text"> This song has been played {BrisbanePlays.length} time/s since 06 Feb, 2023. </p>
-    {BrisbanePlays.map(({ dateUtc }) => (
-      <p className="text" key={dateUtc}> This song was played at: { new Date(Date.parse(dateUtc)).toLocaleString("en-US")}</p>
-    ))}
+    
   </div> ) : (<div></div>) }
+
+  {BrisbaneArtistPlays.length > 0 ? (
+      
+      <div>
+        <p className="text"> This artist has been played {BrisbaneArtistPlays.length} time/s since 06 Feb, 2023. </p>
+      
+    </div> ) : (<div></div>) }
+
+
    
   
   
@@ -682,12 +835,18 @@ const WebSocketExample = () => {
     <h1 className="h1">Song Stats</h1>
     
     {SydneyPlays.length > 0 ? (
-    <div>
-    <p className="text"> This song has been played {SydneyPlays.length} time since 06 Feb, 2023. </p>
-    {SydneyPlays.map(({ dateUtc }) => (
-      <p className="text" key={dateUtc}> This song was played at: { new Date(Date.parse(dateUtc)).toLocaleString("en-US")}</p>
-    ))}
-  </div> ) : <div></div> }
+      
+      <div>
+        <p className="text"> This song has been played {SydneyPlays.length} time/s since 06 Feb, 2023. </p>
+      
+    </div> ) : (<div></div>) }
+  
+    {SydneyArtistPlays.length > 0 ? (
+        
+        <div>
+          <p className="text"> This artist has been played {SydneyArtistPlays.length} time/s since 06 Feb, 2023. </p>
+        
+      </div> ) : (<div></div>) }
 
     </div>
     </div>
@@ -699,12 +858,18 @@ const WebSocketExample = () => {
     <h1 className="h1">Song Stats</h1>
     
     {MelbournePlays.length > 0 ? (
-    <div>
-      <p className="text"> This song has been played {MelbournePlays.length} time since 06 Feb, 2023. </p>
-    {MelbournePlays.map(({ dateUtc }) => (
-      <p className="text" key={dateUtc}> This song was played at: { new Date(Date.parse(dateUtc)).toLocaleString("en-US")}</p>
-    ))}
-  </div> ) : <div></div> }
+      
+      <div>
+        <p className="text"> This song has been played {MelbournePlays.length} time/s since 06 Feb, 2023. </p>
+      
+    </div> ) : (<div></div>) }
+  
+    {MelbourneArtistPlays.length > 0 ? (
+        
+        <div>
+          <p className="text"> This artist has been played {MelbourneArtistPlays.length} time/s since 06 Feb, 2023. </p>
+        
+      </div> ) : (<div></div>) }
     
     </div>
     
@@ -729,11 +894,108 @@ const WebSocketExample = () => {
 
     
     </div>
-
+  
     <div style={styles} className="box">
     <div className="header-box">
     <h1>Lyrics</h1>
     <p dangerouslySetInnerHTML={{ __html: LyricsMelbourne }} />   
+    </div>
+    </div>
+    </div>
+
+
+
+
+    <div  className="container">
+    <div style={styles}  className="box">
+    <div  className="header-box">
+    <h1>Artist Leaderboard (Brisbane)</h1>
+    {BrisbaneArtistLeaderboard.length > 0 ? (
+        
+        <div>
+          <table>
+      <thead>
+        <tr>
+          <th>Artist Name</th>
+          <th>Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        {BrisbaneArtistLeaderboard.map(artist => (
+          <tr key={artist.name}>
+            <td>{artist.name}</td>
+            <td>{artist.count}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+        
+      </div> ) : (<div></div>) }
+    
+
+    </div>
+
+    </div>
+    
+
+    <div style={styles} className="box">
+    <div className="header-box">
+    <h1>Artist Leaderboard (Sydney)</h1>
+    {SydneyArtistLeaderboard.length > 0 ? (
+        
+        <div>
+          <table>
+      <thead>
+        <tr>
+          <th>Artist Name</th>
+          <th>Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        {SydneyArtistLeaderboard.map(artist => (
+          <tr key={artist.name}>
+            <td>{artist.name}</td>
+            <td>{artist.count}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+        
+      </div> ) : (<div></div>) }
+    
+
+    </div>
+
+    
+    </div>
+
+    <div style={styles} className="box">
+    <div className="header-box">
+    <h1>Artist Leaderboard (Melbourne)</h1>
+    {MelbourneArtistLeaderboard.length > 0 ? (
+        
+        <div>
+          <table>
+      <thead>
+        <tr>
+          <th>Artist Name</th>
+          <th>Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        {MelbourneArtistLeaderboard.map(artist => (
+          <tr key={artist.name}>
+            <td>{artist.name}</td>
+            <td>{artist.count}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+        
+      </div> ) : (<div></div>) }
+    
+
+
     </div>
     </div>
     </div>

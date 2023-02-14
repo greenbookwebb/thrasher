@@ -1,7 +1,7 @@
 export default function handler(req, res) {
     const request = require('request');
     const accessToken = 'cojH8jQqn4cF36PceSsnXySHxnoR9h1FDOmI-ACXHY4SBn5tWhEfiqIO_izcqQQr';
-    console.log("SONG", req.query);
+    //console.log("SONG", req.query);
     let q = req.query;
     //console.log(q);
     let apiUrl = 'https://api.genius.com/songs/';
