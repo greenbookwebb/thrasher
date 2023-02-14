@@ -4,7 +4,6 @@ import axios from 'axios';
 import ToggleSwitch from 'react-toggle-switch';
 import { initializeApp} from "firebase/app";
 import { getDatabase, ref, set, child, get } from "firebase/database";
-import createProxyMiddleware from 'http-proxy-middleware';
 
 
 
@@ -38,27 +37,6 @@ const WebSocketExample = () => {
   const [MelbournePlays, setMelbournePlays] = useState({});
   const [SydneyPlays, setSydneyPlays] = useState({});
 
-  async function getName() {
-    const { data } = await axios.get('/api/hello');
-    console.log(data);
-    return data;
-  };
-  getName();
-
-
-  const proxy = createProxyMiddleware({
-    target: 'https://api.genius.com',
-    changeOrigin: true,
-  });
-  
-  const instance = axios.create({
-    proxy,
-  });
-  
-  instance.get('/api/search?q=eminem').then(response => {
-    console.log(response.data);
-  });
-    
   
   
   
@@ -136,7 +114,7 @@ const WebSocketExample = () => {
 
     socket.onmessage = function(event) {
       const parsedData = JSON.parse(event.data);
-      callSearchFunction('Bruce Springsteen');
+     
       
 
       
