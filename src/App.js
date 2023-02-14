@@ -215,6 +215,7 @@ const WebSocketExample = () => {
                   console.log(youtubeUrl);
                   const embedLink = youtubeUrl.replace("watch?v=", "embed/");
                   embedLink = youtubeUrl.replace("http", "https");
+                  console.log("Brisbane embedLink", embedLink);
                   setBrisbaneYoutube(embedLink);
                   break;
                 };
@@ -311,6 +312,7 @@ const WebSocketExample = () => {
                   console.log(youtubeUrl);
                   const embedLink = youtubeUrl.replace("watch?v=", "embed/");
                   embedLink = youtubeUrl.replace("http", "https");
+                  console.log("Melb embedLink", embedLink);
                   setMelbourneYoutube(embedLink);
                 }
 
@@ -399,6 +401,7 @@ const WebSocketExample = () => {
                   console.log(youtubeUrl);
                   const embedLink = youtubeUrl.replace("watch?v=", "embed/");
                   embedLink = youtubeUrl.replace("http", "https");
+                  console.log("syd embedLink", embedLink);
                   setSydneyYoutube(embedLink);
                 }}
 
