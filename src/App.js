@@ -28,8 +28,6 @@ const WebSocketExample = () => {
   const [MelbourneYoutube, setMelbourneYoutube] = useState();
   const [SydneyYoutube, setSydneyYoutube] = useState();
 
-  const [BrisbaneSongRelationships, setBrisbaneSongRelationships] = useState();
-
   const [BrisbanePlays, setBrisbanePlays] = useState({});
   const [MelbournePlays, setMelbournePlays] = useState({});
   const [SydneyPlays, setSydneyPlays] = useState({});
@@ -42,6 +40,7 @@ const WebSocketExample = () => {
   const [MelbourneArtistLeaderboard, setMelbourneArtistLeaderboard] = useState({});
   const [SydneyArtistLeaderboard, setSydneyArtistLeaderboard] = useState({});
   
+
   
   
 
@@ -69,8 +68,6 @@ const WebSocketExample = () => {
     
 
   };
-
-
 
   const toggleDarkMode = () => {
     setIsLightMode(!isLightMode);
@@ -178,9 +175,6 @@ const WebSocketExample = () => {
     });
 
 
-
-    
-
     };
 
 
@@ -207,7 +201,8 @@ const WebSocketExample = () => {
           //console.log("parsedData.data.stations[i].currentTrack", parsedData.data.stations[i].currentTrack);
           const station = parsedData.data.stations[i].station;
           const currentTrack = parsedData.data.stations[i].currentTrack;
-          set(ref(database, '4mmm_fm/' + currentTrack.dateUtc), currentTrack);
+          console.log("currentTrack", currentTrack);
+          
 
           get(child(dbRef, `4mmm_fm`)).then((snapshot) => {
             if (snapshot.exists()) {
@@ -274,7 +269,10 @@ const WebSocketExample = () => {
 
             axios.get(`/api/song?q=${response.data.response.hits[0].result.id}`)
             .then(response => {
-              console.log("song info",response.data.response.song);  setBrisbaneGenius(response.data.response.song);
+              console.log("song infobne ",response.data.response.song);  setBrisbaneGenius(response.data.response.song);
+              
+
+              
               var bris_text = '';
               
               var parseNode = function(node) {
@@ -294,6 +292,11 @@ const WebSocketExample = () => {
               
               
                 setBrisbaneMeaning(bris_text);
+              currentTrack.genius_image = response.data.response.song.header_image_url;
+              currentTrack.genius_id = response.data.response.song.id;
+              currentTrack.genius_meaning = bris_text;
+              console.log("currentTrack After adding", currentTrack);
+              set(ref(database, '4mmm_fm/' + currentTrack.dateUtc), currentTrack);
 
                 
              
@@ -333,13 +336,15 @@ const WebSocketExample = () => {
             setBrisbaneGenius({});
           });
           
+          
         };
+
 
         if(parsedData.data.stations[i].station === "3mmm_fm" && parsedData.data.stations[i].currentTrack.id && currentSongMelbourne.id !== parsedData.data.stations[i].currentTrack.id ) {
           setCurrentSongMelbourne(parsedData.data.stations[i].currentTrack);
           const station = parsedData.data.stations[i].station;
           const currentTrack = parsedData.data.stations[i].currentTrack;
-          set(ref(database, '3mmm_fm/' + currentTrack.dateUtc ), currentTrack);
+          
 
           get(child(dbRef, `3mmm_fm`)).then((snapshot) => {
             if (snapshot.exists()) {
@@ -422,6 +427,11 @@ const WebSocketExample = () => {
               });
               
               setMelbourneMeaning(melb_text);
+              currentTrack.genius_image = response.data.response.song.header_image_url;
+              currentTrack.genius_id = response.data.response.song.id;
+              currentTrack.genius_meaning = melb_text;
+              console.log("currentTrack After adding", currentTrack);
+              set(ref(database, '3mmm_fm/' + currentTrack.dateUtc), currentTrack);
 
               
 
@@ -455,7 +465,7 @@ const WebSocketExample = () => {
           setCurrentSongSydney(parsedData.data.stations[i].currentTrack);
           const station = parsedData.data.stations[i].station;
           const currentTrack = parsedData.data.stations[i].currentTrack;
-          set(ref(database, '2mmm_fm/' + currentTrack.dateUtc ), currentTrack);
+          
 
           get(child(dbRef, `2mmm_fm`)).then((snapshot) => {
             if (snapshot.exists()) {
@@ -542,6 +552,11 @@ const WebSocketExample = () => {
               });
               
               setSydneyMeaning(syd_text);
+              currentTrack.genius_image = response.data.response.song.header_image_url;
+              currentTrack.genius_id = response.data.response.song.id;
+              currentTrack.genius_meaning = syd_text;
+              console.log("currentTrack After adding", currentTrack);
+              set(ref(database, '2mmm_fm/' + currentTrack.dateUtc), currentTrack);
 
               
 
