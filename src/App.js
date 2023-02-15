@@ -6,7 +6,7 @@ import { initializeApp} from "firebase/app";
 import { getDatabase, ref, set, child, get } from "firebase/database";
 
 const WebSocketExample = () => {
-  const [isLightMode, setIsLightMode] = useState(true);
+  const [isLightMode, setIsLightMode] = useState(false);
 
   const [currentSongBrisbane, setCurrentSongBrisbane] = useState({});
   const [currentSongMelbourne, setCurrentSongMelbourne] = useState({});
@@ -112,13 +112,14 @@ const WebSocketExample = () => {
       if (snapshot.exists()) {
         let a = Object.values(snapshot.val());
         let artistCounts = {};
+
         a.forEach(item => {
           let artist = item.artistName;
           artistCounts[artist] = artistCounts[artist] ? artistCounts[artist] + 1 : 1;
         });
 
         let sortedArtists = Object.keys(artistCounts)
-        .map(artist => ({ name: artist, count: artistCounts[artist] }))
+        .map(artist => ({ name: artist, count: artistCounts[artist], imageUrl: a.find(item => item.artistName === artist).genius_image }))
         .sort((a, b) => b.count - a.count);
 
         setBrisbaneArtistLeaderboard(sortedArtists);
@@ -140,7 +141,7 @@ const WebSocketExample = () => {
         });
 
         let sortedArtists = Object.keys(artistCounts)
-        .map(artist => ({ name: artist, count: artistCounts[artist] }))
+        .map(artist => ({ name: artist, count: artistCounts[artist], imageUrl: a.find(item => item.artistName === artist).genius_image }))
         .sort((a, b) => b.count - a.count);
 
         setMelbourneArtistLeaderboard(sortedArtists);
@@ -162,7 +163,7 @@ const WebSocketExample = () => {
         });
 
         let sortedArtists = Object.keys(artistCounts)
-        .map(artist => ({ name: artist, count: artistCounts[artist] }))
+        .map(artist => ({ name: artist, count: artistCounts[artist], imageUrl: a.find(item => item.artistName === artist).genius_image }))
         .sort((a, b) => b.count - a.count);
 
         setSydneyArtistLeaderboard(sortedArtists);
@@ -203,7 +204,7 @@ const WebSocketExample = () => {
           const currentTrack = parsedData.data.stations[i].currentTrack;
           console.log("currentTrack", currentTrack);
           
-
+          var database_function_brisbane = function() {
           get(child(dbRef, `4mmm_fm`)).then((snapshot) => {
             if (snapshot.exists()) {
               const filteredDataArtist = Object.values(snapshot.val()).filter(d => d.artistName === currentTrack.artistName);
@@ -233,7 +234,7 @@ const WebSocketExample = () => {
               });
     
               let sortedArtists = Object.keys(artistCounts)
-              .map(artist => ({ name: artist, count: artistCounts[artist] }))
+              .map(artist => ({ name: artist, count: artistCounts[artist], imageUrl: a.find(item => item.artistName === artist).genius_image }))
               .sort((a, b) => b.count - a.count);
     
               setBrisbaneArtistLeaderboard(sortedArtists);
@@ -244,6 +245,7 @@ const WebSocketExample = () => {
           }).catch((error) => {
             console.error(error);
           });
+          };
           
 
           axios.get('/api/lyrics', { params: {
@@ -292,12 +294,12 @@ const WebSocketExample = () => {
               
               
                 setBrisbaneMeaning(bris_text);
-              currentTrack.genius_image = response.data.response.song.header_image_url;
+                currentTrack.genius_image = response.data.response.song.header_image_url;
               currentTrack.genius_id = response.data.response.song.id;
               currentTrack.genius_meaning = bris_text;
-              console.log("currentTrack After adding", currentTrack);
               set(ref(database, '4mmm_fm/' + currentTrack.dateUtc), currentTrack);
-
+              database_function_brisbane();
+              
                 
              
               
@@ -309,6 +311,17 @@ const WebSocketExample = () => {
                   console.log(youtubeUrl);
                   let embedLink = youtubeUrl.replace("watch?v=", "embed/");
                   embedLink = embedLink.replace("http", "https");
+
+                  currentTrack.genius_image = response.data.response.song.header_image_url;
+              currentTrack.genius_id = response.data.response.song.id;
+              currentTrack.genius_meaning = bris_text;
+              currentTrack.youtube = embedLink;
+              console.log("currentTrack After adding", currentTrack);
+              set(ref(database, '4mmm_fm/' + currentTrack.dateUtc), currentTrack);
+              database_function_brisbane();
+
+
+                  
                   //console.log("Brisbane embedLink", embedLink);
                   setBrisbaneYoutube(embedLink);
                   break;
@@ -345,7 +358,7 @@ const WebSocketExample = () => {
           const station = parsedData.data.stations[i].station;
           const currentTrack = parsedData.data.stations[i].currentTrack;
           
-
+          var database_function_melbourne = function() {
           get(child(dbRef, `3mmm_fm`)).then((snapshot) => {
             if (snapshot.exists()) {
               const filteredDataArtist = Object.values(snapshot.val()).filter(d => d.artistName === currentTrack.artistName);
@@ -376,7 +389,7 @@ const WebSocketExample = () => {
               });
     
               let sortedArtists = Object.keys(artistCounts)
-              .map(artist => ({ name: artist, count: artistCounts[artist] }))
+              .map(artist => ({ name: artist, count: artistCounts[artist], imageUrl: a.find(item => item.artistName === artist).genius_image }))
               .sort((a, b) => b.count - a.count);
     
               setMelbourneArtistLeaderboard(sortedArtists);
@@ -387,6 +400,7 @@ const WebSocketExample = () => {
           }).catch((error) => {
             console.error(error);
           });
+        };
 
           axios.get('/api/lyrics', { params: {
             artist: parsedData.data.stations[i].currentTrack.artistName,
@@ -427,11 +441,16 @@ const WebSocketExample = () => {
               });
               
               setMelbourneMeaning(melb_text);
+
               currentTrack.genius_image = response.data.response.song.header_image_url;
               currentTrack.genius_id = response.data.response.song.id;
               currentTrack.genius_meaning = melb_text;
+              
               console.log("currentTrack After adding", currentTrack);
               set(ref(database, '3mmm_fm/' + currentTrack.dateUtc), currentTrack);
+
+              database_function_melbourne();
+              
 
               
 
@@ -441,6 +460,15 @@ const WebSocketExample = () => {
                   console.log(youtubeUrl);
                   let embedLink = youtubeUrl.replace("watch?v=", "embed/");
                   embedLink = embedLink.replace("http", "https");
+
+                  currentTrack.genius_image = response.data.response.song.header_image_url;
+              currentTrack.genius_id = response.data.response.song.id;
+              currentTrack.genius_meaning = melb_text;
+              currentTrack.youtube = embedLink;
+              console.log("currentTrack After adding", currentTrack);
+              set(ref(database, '3mmm_fm/' + currentTrack.dateUtc), currentTrack);
+
+
                   //console.log("Melb embedLink", embedLink);
                   setMelbourneYoutube(embedLink);
                 }
@@ -466,7 +494,7 @@ const WebSocketExample = () => {
           const station = parsedData.data.stations[i].station;
           const currentTrack = parsedData.data.stations[i].currentTrack;
           
-
+          var database_function_sydney = function() {
           get(child(dbRef, `2mmm_fm`)).then((snapshot) => {
             if (snapshot.exists()) {
               const filteredDataArtist = Object.values(snapshot.val()).filter(d => d.artistName === currentTrack.artistName);
@@ -500,7 +528,7 @@ const WebSocketExample = () => {
               });
     
               let sortedArtists = Object.keys(artistCounts)
-              .map(artist => ({ name: artist, count: artistCounts[artist] }))
+              .map(artist => ({ name: artist, count: artistCounts[artist], imageUrl: a.find(item => item.artistName === artist).genius_image }))
               .sort((a, b) => b.count - a.count);
     
               setSydneyArtistLeaderboard(sortedArtists);
@@ -511,6 +539,7 @@ const WebSocketExample = () => {
           }).catch((error) => {
             console.error(error);
           });
+        };
 
           axios.get('/api/lyrics', { params: {
             artist: parsedData.data.stations[i].currentTrack.artistName,
@@ -552,11 +581,16 @@ const WebSocketExample = () => {
               });
               
               setSydneyMeaning(syd_text);
+
               currentTrack.genius_image = response.data.response.song.header_image_url;
               currentTrack.genius_id = response.data.response.song.id;
               currentTrack.genius_meaning = syd_text;
+              
               console.log("currentTrack After adding", currentTrack);
               set(ref(database, '2mmm_fm/' + currentTrack.dateUtc), currentTrack);
+
+              database_function_sydney();
+
 
               
 
@@ -567,6 +601,13 @@ const WebSocketExample = () => {
                   let embedLink = youtubeUrl.replace("watch?v=", "embed/");
                   embedLink = embedLink.replace("http", "https");
                   //console.log("syd embedLink", embedLink);
+
+                  currentTrack.genius_image = response.data.response.song.header_image_url;
+              currentTrack.genius_id = response.data.response.song.id;
+              currentTrack.genius_meaning = syd_text;
+              currentTrack.youtube = embedLink;
+              console.log("currentTrack After adding", currentTrack);
+              set(ref(database, '2mmm_fm/' + currentTrack.dateUtc), currentTrack);
                   setSydneyYoutube(embedLink);
                 }}
 
@@ -613,7 +654,7 @@ const WebSocketExample = () => {
       <h1>Thrasher!</h1>
       <h3>Thrasher is a website that is designed to be the one-stop spot to see what songs Triple M is currently Thrashing across the east coast! </h3>
       <h3>Below you'll see the songs which Triple M is currently thrashing.</h3>
-      <h3>At the bottom of the page, you'll see the leaderboard as to the Artists which have been the most Thrashed since February, 2023!</h3>
+      <h3>At the bottom of the page, you'll see the leaderboard as to the Artists which have been the most Thrashed since 12:23pm, 15 February, 2023!</h3>
     </div>
     
     <div  className="container">
@@ -838,14 +879,14 @@ const WebSocketExample = () => {
     {BrisbanePlays.length > 0 ? (
       
     <div>
-      <p className="text"> This song has been played {BrisbanePlays.length} time/s since 06 Feb, 2023. </p>
+      <p className="text"> This song has been played {BrisbanePlays.length} time/s since 12:23pm, 15 Feb, 2023. </p>
     
   </div> ) : (<div></div>) }
 
   {BrisbaneArtistPlays.length > 0 ? (
       
       <div>
-        <p className="text"> This artist has been played {BrisbaneArtistPlays.length} time/s since 06 Feb, 2023. </p>
+        <p className="text"> This artist has been played {BrisbaneArtistPlays.length} time/s since 12:23pm, 15 Feb, 2023. </p>
       
     </div> ) : (<div></div>) }
 
@@ -864,14 +905,14 @@ const WebSocketExample = () => {
     {SydneyPlays.length > 0 ? (
       
       <div>
-        <p className="text"> This song has been played {SydneyPlays.length} time/s since 06 Feb, 2023. </p>
+        <p className="text"> This song has been played {SydneyPlays.length} time/s since 12:23pm, 15 Feb, 2023. </p>
       
     </div> ) : (<div></div>) }
   
     {SydneyArtistPlays.length > 0 ? (
         
         <div>
-          <p className="text"> This artist has been played {SydneyArtistPlays.length} time/s since 06 Feb, 2023. </p>
+          <p className="text"> This artist has been played {SydneyArtistPlays.length} time/s since 12:23pm, 15 Feb, 2023. </p>
         
       </div> ) : (<div></div>) }
 
@@ -887,14 +928,14 @@ const WebSocketExample = () => {
     {MelbournePlays.length > 0 ? (
       
       <div>
-        <p className="text"> This song has been played {MelbournePlays.length} time/s since 06 Feb, 2023. </p>
+        <p className="text"> This song has been played {MelbournePlays.length} time/s since 12:23pm, 15 Feb, 2023. </p>
       
     </div> ) : (<div></div>) }
   
     {MelbourneArtistPlays.length > 0 ? (
         
         <div>
-          <p className="text"> This artist has been played {MelbourneArtistPlays.length} time/s since 06 Feb, 2023. </p>
+          <p className="text"> This artist has been played {MelbourneArtistPlays.length} time/s since 12:23pm, 15 Feb, 2023. </p>
         
       </div> ) : (<div></div>) }
     
@@ -952,6 +993,8 @@ const WebSocketExample = () => {
           <tr key={artist.name}>
             <td>{artist.name}</td>
             <td>{artist.count}</td>
+            <td><img src={artist.imageUrl} alt={`Album art for ${artist.name}`} /></td>
+            
           </tr>
         ))}
       </tbody>
@@ -983,6 +1026,7 @@ const WebSocketExample = () => {
           <tr key={artist.name}>
             <td>{artist.name}</td>
             <td>{artist.count}</td>
+            <td><img src={artist.imageUrl} alt={`Album art for ${artist.name}`} /></td>
           </tr>
         ))}
       </tbody>
@@ -1014,6 +1058,7 @@ const WebSocketExample = () => {
           <tr key={artist.name}>
             <td>{artist.name}</td>
             <td>{artist.count}</td>
+            <td><img src={artist.imageUrl} alt={`Album art for ${artist.name}`} /></td>
           </tr>
         ))}
       </tbody>
