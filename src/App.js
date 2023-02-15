@@ -48,7 +48,7 @@ const WebSocketExample = () => {
   const styles = {
     backgroundColor: isLightMode ? '#fff' : '#121212',
     color: isLightMode ? '#121212' : '#fff',
-    border: isLightMode ? '1px solid #333' : '1px solid #fff',
+    border: isLightMode ? '3px solid #333' : '3px solid #fff',
     top: 0,
     right: 0,
   };
@@ -63,7 +63,14 @@ const WebSocketExample = () => {
     padding: '5px',
     
   };
-  
+
+  const styles_2 = {
+    backgroundColor: isLightMode ? '#e6e6e6' : '#2f2727',
+    
+
+  };
+
+
 
   const toggleDarkMode = () => {
     setIsLightMode(!isLightMode);
@@ -581,7 +588,7 @@ const WebSocketExample = () => {
   }, []);
 
   return (
-    <>
+    <div  style={styles_2}>
     <div>
     <button style={styles_1} onClick={toggleDarkMode}>
       {isLightMode ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
@@ -589,9 +596,9 @@ const WebSocketExample = () => {
     
     <div style={styles}  className="box">
       <h1>Thrasher!</h1>
-      <h2>Thrasher is a website that is designed to be the one-stop spot to see what songs Triple M is currently Thrashing across the east coast! </h2>
-      <h2>Below you'll see the songs which Triple M is currently thrashing.</h2>
-      <h2>At the bottom of the page, you'll see the leaderboard as to the Artists which have been the most Thrashed since February, 2023!</h2>
+      <h3>Thrasher is a website that is designed to be the one-stop spot to see what songs Triple M is currently Thrashing across the east coast! </h3>
+      <h3>Below you'll see the songs which Triple M is currently thrashing.</h3>
+      <h3>At the bottom of the page, you'll see the leaderboard as to the Artists which have been the most Thrashed since February, 2023!</h3>
     </div>
     
     <div  className="container">
@@ -1004,7 +1011,7 @@ const WebSocketExample = () => {
     </div>
     </div>
     </div>
-</>
+</div>
   );
 };
 
