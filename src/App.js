@@ -39,6 +39,10 @@ const WebSocketExample = () => {
   const [BrisbaneArtistLeaderboard, setBrisbaneArtistLeaderboard] = useState({});
   const [MelbourneArtistLeaderboard, setMelbourneArtistLeaderboard] = useState({});
   const [SydneyArtistLeaderboard, setSydneyArtistLeaderboard] = useState({});
+
+  const [BrisbaneSongLeaderboard, setBrisbaneSongLeaderboard] = useState({});
+  const [MelbourneSongLeaderboard, setMelbourneSongLeaderboard] = useState({});
+  const [SydneySongLeaderboard, setSydneySongLeaderboard] = useState({});
   
 
   
@@ -112,6 +116,25 @@ const WebSocketExample = () => {
       if (snapshot.exists()) {
         let a = Object.values(snapshot.val());
         let artistCounts = {};
+        let songCounts = {};
+
+        a.forEach(item => {
+          let song = item.genius_id;
+          songCounts[song] = songCounts[song] ? songCounts[song] + 1 : 1;
+        });
+
+        let sortedSongs = Object.keys(songCounts)
+    .map(song => ({ id: song, 
+                    count: songCounts[song], 
+                    title: a.find(item => item.genius_id == song).title,
+                    artist: a.find(item => item.genius_id == song).artistName,
+                    youtube: a.find(item => item.genius_id == song).youtube}))
+    .sort((a, b) => b.count - a.count).slice(0, 10);
+
+    setBrisbaneSongLeaderboard(sortedSongs);
+    console.log("sortedSongs", sortedSongs);
+
+
 
         a.forEach(item => {
           let artist = item.artistName;
@@ -120,7 +143,7 @@ const WebSocketExample = () => {
 
         let sortedArtists = Object.keys(artistCounts)
         .map(artist => ({ name: artist, count: artistCounts[artist], imageUrl: a.find(item => item.artistName === artist).genius_image }))
-        .sort((a, b) => b.count - a.count);
+        .sort((a, b) => b.count - a.count).slice(0, 10);
 
         setBrisbaneArtistLeaderboard(sortedArtists);
         
@@ -135,6 +158,26 @@ const WebSocketExample = () => {
       if (snapshot.exists()) {
         let a = Object.values(snapshot.val());
         let artistCounts = {};
+        let songCounts = {};
+
+        a.forEach(item => {
+          let song = item.genius_id;
+          songCounts[song] = songCounts[song] ? songCounts[song] + 1 : 1;
+        });
+
+        let sortedSongs = Object.keys(songCounts)
+    .map(song => ({ id: song, 
+                    count: songCounts[song], 
+                    title: a.find(item => item.genius_id == song).title,
+                    artist: a.find(item => item.genius_id == song).artistName,
+                    youtube: a.find(item => item.genius_id == song).youtube}))
+    .sort((a, b) => b.count - a.count).slice(0, 10);
+
+    setMelbourneSongLeaderboard(sortedSongs);
+    console.log("sortedSongs", sortedSongs);
+
+
+
         a.forEach(item => {
           let artist = item.artistName;
           artistCounts[artist] = artistCounts[artist] ? artistCounts[artist] + 1 : 1;
@@ -142,7 +185,8 @@ const WebSocketExample = () => {
 
         let sortedArtists = Object.keys(artistCounts)
         .map(artist => ({ name: artist, count: artistCounts[artist], imageUrl: a.find(item => item.artistName === artist).genius_image }))
-        .sort((a, b) => b.count - a.count);
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 10);
 
         setMelbourneArtistLeaderboard(sortedArtists);
         
@@ -157,6 +201,24 @@ const WebSocketExample = () => {
       if (snapshot.exists()) {
         let a = Object.values(snapshot.val());
         let artistCounts = {};
+        let songCounts = {};
+
+        a.forEach(item => {
+          let song = item.genius_id;
+          songCounts[song] = songCounts[song] ? songCounts[song] + 1 : 1;
+        });
+
+        let sortedSongs = Object.keys(songCounts)
+    .map(song => ({ id: song, 
+                    count: songCounts[song], 
+                    title: a.find(item => item.genius_id == song).title,
+                    artist: a.find(item => item.genius_id == song).artistName,
+                    youtube: a.find(item => item.genius_id == song).youtube}))
+    .sort((a, b) => b.count - a.count).slice(0, 10);
+
+    setSydneySongLeaderboard(sortedSongs);
+
+
         a.forEach(item => {
           let artist = item.artistName;
           artistCounts[artist] = artistCounts[artist] ? artistCounts[artist] + 1 : 1;
@@ -164,7 +226,7 @@ const WebSocketExample = () => {
 
         let sortedArtists = Object.keys(artistCounts)
         .map(artist => ({ name: artist, count: artistCounts[artist], imageUrl: a.find(item => item.artistName === artist).genius_image }))
-        .sort((a, b) => b.count - a.count);
+        .sort((a, b) => b.count - a.count).slice(0, 10);
 
         setSydneyArtistLeaderboard(sortedArtists);
         
@@ -228,15 +290,35 @@ const WebSocketExample = () => {
             if (snapshot.exists()) {
               let a = Object.values(snapshot.val());
               let artistCounts = {};
+              let songCounts = {};
+      
+              a.forEach(item => {
+                let song = item.genius_id;
+                songCounts[song] = songCounts[song] ? songCounts[song] + 1 : 1;
+              });
+      
+              let sortedSongs = Object.keys(songCounts)
+          .map(song => ({ id: song, 
+                          count: songCounts[song], 
+                          title: a.find(item => item.genius_id == song).title,
+                          artist: a.find(item => item.genius_id == song).artistName,
+                          youtube: a.find(item => item.genius_id == song).youtube}))
+          .sort((a, b) => b.count - a.count).slice(0, 10);
+      
+          setBrisbaneSongLeaderboard(sortedSongs);
+          console.log("sortedSongs", sortedSongs);
+      
+      
+      
               a.forEach(item => {
                 let artist = item.artistName;
                 artistCounts[artist] = artistCounts[artist] ? artistCounts[artist] + 1 : 1;
               });
-    
+      
               let sortedArtists = Object.keys(artistCounts)
               .map(artist => ({ name: artist, count: artistCounts[artist], imageUrl: a.find(item => item.artistName === artist).genius_image }))
-              .sort((a, b) => b.count - a.count);
-    
+              .sort((a, b) => b.count - a.count).slice(0, 10);
+      
               setBrisbaneArtistLeaderboard(sortedArtists);
               
             } else {
@@ -352,7 +434,6 @@ const WebSocketExample = () => {
           
         };
 
-
         if(parsedData.data.stations[i].station === "3mmm_fm" && parsedData.data.stations[i].currentTrack.id && currentSongMelbourne.id !== parsedData.data.stations[i].currentTrack.id ) {
           setCurrentSongMelbourne(parsedData.data.stations[i].currentTrack);
           const station = parsedData.data.stations[i].station;
@@ -383,15 +464,36 @@ const WebSocketExample = () => {
             if (snapshot.exists()) {
               let a = Object.values(snapshot.val());
               let artistCounts = {};
+              let songCounts = {};
+      
+              a.forEach(item => {
+                let song = item.genius_id;
+                songCounts[song] = songCounts[song] ? songCounts[song] + 1 : 1;
+              });
+      
+              let sortedSongs = Object.keys(songCounts)
+          .map(song => ({ id: song, 
+                          count: songCounts[song], 
+                          title: a.find(item => item.genius_id == song).title,
+                          artist: a.find(item => item.genius_id == song).artistName,
+                          youtube: a.find(item => item.genius_id == song).youtube}))
+          .sort((a, b) => b.count - a.count).slice(0, 10);
+      
+          setMelbourneSongLeaderboard(sortedSongs);
+          console.log("sortedSongs", sortedSongs);
+      
+      
+      
               a.forEach(item => {
                 let artist = item.artistName;
                 artistCounts[artist] = artistCounts[artist] ? artistCounts[artist] + 1 : 1;
               });
-    
+      
               let sortedArtists = Object.keys(artistCounts)
               .map(artist => ({ name: artist, count: artistCounts[artist], imageUrl: a.find(item => item.artistName === artist).genius_image }))
-              .sort((a, b) => b.count - a.count);
-    
+              .sort((a, b) => b.count - a.count)
+              .slice(0, 10);
+      
               setMelbourneArtistLeaderboard(sortedArtists);
               
             } else {
@@ -522,15 +624,33 @@ const WebSocketExample = () => {
             if (snapshot.exists()) {
               let a = Object.values(snapshot.val());
               let artistCounts = {};
+              let songCounts = {};
+      
+              a.forEach(item => {
+                let song = item.genius_id;
+                songCounts[song] = songCounts[song] ? songCounts[song] + 1 : 1;
+              });
+      
+              let sortedSongs = Object.keys(songCounts)
+          .map(song => ({ id: song, 
+                          count: songCounts[song], 
+                          title: a.find(item => item.genius_id == song).title,
+                          artist: a.find(item => item.genius_id == song).artistName,
+                          youtube: a.find(item => item.genius_id == song).youtube}))
+          .sort((a, b) => b.count - a.count).slice(0, 10);
+      
+          setSydneySongLeaderboard(sortedSongs);
+      
+      
               a.forEach(item => {
                 let artist = item.artistName;
                 artistCounts[artist] = artistCounts[artist] ? artistCounts[artist] + 1 : 1;
               });
-    
+      
               let sortedArtists = Object.keys(artistCounts)
               .map(artist => ({ name: artist, count: artistCounts[artist], imageUrl: a.find(item => item.artistName === artist).genius_image }))
-              .sort((a, b) => b.count - a.count);
-    
+              .sort((a, b) => b.count - a.count).slice(0, 10);
+      
               setSydneyArtistLeaderboard(sortedArtists);
               
             } else {
@@ -985,7 +1105,7 @@ const WebSocketExample = () => {
       <thead>
         <tr>
           <th>Artist Name</th>
-          <th>Count</th>
+          <th>Plays</th>
         </tr>
       </thead>
       <tbody>
@@ -1001,6 +1121,38 @@ const WebSocketExample = () => {
     </table>
         
       </div> ) : (<div></div>) }
+      <h1>Song Leaderboard (Brisbane)</h1>
+    {BrisbaneSongLeaderboard.length > 0 ? (
+        
+        <div>
+          <table>
+      <thead>
+        <tr>
+        
+          <th>Song</th>
+          <th>Artist</th>
+          <th>Plays</th>
+        
+
+        </tr>
+      </thead>
+      <tbody>
+        {BrisbaneSongLeaderboard.map(song => (
+          <tr key={song.id}>
+            <td>{song.title}</td>
+            <td>{song.artist}</td>
+            <td>{song.count}</td>
+
+          </tr>
+          
+        ))}
+      </tbody>
+    </table>
+        
+      </div> ) : (<div></div>) }
+
+
+      
     
 
     </div>
@@ -1018,7 +1170,7 @@ const WebSocketExample = () => {
       <thead>
         <tr>
           <th>Artist Name</th>
-          <th>Count</th>
+          <th>Plays</th>
         </tr>
       </thead>
       <tbody>
@@ -1028,6 +1180,33 @@ const WebSocketExample = () => {
             <td>{artist.count}</td>
             <td><img src={artist.imageUrl} alt={`Album art for ${artist.name}`} /></td>
           </tr>
+        ))}
+      </tbody>
+    </table>
+        
+      </div> ) : (<div></div>) }
+      <h1>Song Leaderboard (Sydney)</h1>
+    {SydneySongLeaderboard.length > 0 ? (
+        
+        <div>
+          <table>
+      <thead>
+        <tr>
+        <th>Song</th>
+          <th>Artist</th>
+          <th>Plays</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        {SydneySongLeaderboard.map(song => (
+          <tr key={song.id}>
+            <td>{song.title}</td>
+            <td>{song.artist}</td>
+            <td>{song.count}</td>
+
+          </tr>
+          
         ))}
       </tbody>
     </table>
@@ -1050,7 +1229,7 @@ const WebSocketExample = () => {
       <thead>
         <tr>
           <th>Artist Name</th>
-          <th>Count</th>
+          <th>Plays</th>
         </tr>
       </thead>
       <tbody>
@@ -1060,6 +1239,33 @@ const WebSocketExample = () => {
             <td>{artist.count}</td>
             <td><img src={artist.imageUrl} alt={`Album art for ${artist.name}`} /></td>
           </tr>
+        ))}
+      </tbody>
+    </table>
+        
+      </div> ) : (<div></div>) }
+      <h1>Song Leaderboard (Melbourne)</h1>
+    {MelbourneSongLeaderboard.length > 0 ? (
+        
+        <div>
+          <table>
+      <thead>
+        <tr>
+        <th>Song</th>
+          <th>Artist</th>
+          <th>Plays</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        {MelbourneSongLeaderboard.map(song => (
+          <tr key={song.id}>
+            <td>{song.title}</td>
+            <td>{song.artist}</td>
+            <td>{song.count}</td>
+
+          </tr>
+          
         ))}
       </tbody>
     </table>
