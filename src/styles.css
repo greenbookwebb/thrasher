@@ -19,7 +19,7 @@ div {
   }
   
   .header-box {
-    
+    width: 30vmin;
     padding: 20px 5;
     text-align: center;
   }

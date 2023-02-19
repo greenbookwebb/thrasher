@@ -4,6 +4,9 @@ import axios from 'axios';
 import ToggleSwitch from 'react-toggle-switch';
 import { initializeApp} from "firebase/app";
 import { getDatabase, ref, set, child, get } from "firebase/database";
+import styled from "styled-components";
+
+
 
 const WebSocketExample = () => {
   const [isLightMode, setIsLightMode] = useState(false);
@@ -769,6 +772,7 @@ const WebSocketExample = () => {
     <button style={styles_1} onClick={toggleDarkMode}>
       {isLightMode ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
     </button></div>
+    
     
     <div style={styles}  className="box">
       <h1>Thrasher!</h1>

@@ -26,6 +26,7 @@
     "song-lyrics-api": "^1.1.0",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
+    "styled-components": "^5.3.6",
     "web-vitals": "^2.1.4",
     "websocket": "^1.0.34"
   },
