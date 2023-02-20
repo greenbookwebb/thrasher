@@ -801,8 +801,6 @@ const WebSocketExample = () => {
     {currentSongBrisbane.title ? <div> <div>
       <iframe
         title="Video Player"
-        width="500"
-        height="300"
         src={BrisbaneYoutube}
         frameBorder="0"
         allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
@@ -841,8 +839,6 @@ const WebSocketExample = () => {
     {currentSongSydney.title ? <div> <div>
       <iframe
         title="Video Player"
-        width="500"
-        height="300"
         src={SydneyYoutube}
         frameBorder="0"
         allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
@@ -880,8 +876,6 @@ const WebSocketExample = () => {
     {currentSongMelbourne.title ? <div> <div>
       <iframe
         title="Video Player"
-        width="500"
-        height="300"
         src={MelbourneYoutube}
         frameBorder="0"
         allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
