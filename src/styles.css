@@ -46,8 +46,16 @@ div {
       height: 20px;
       border-radius: 50%;
     }
+    iframe {
+      width: 100px;
+      height: 200px; /* or any other value that suits your needs */
+    }
   }
 
+  iframe {
+    width: 500px;
+    height: 300px;
+  }
 
   
   .box {
