@@ -47,7 +47,7 @@ div {
       border-radius: 50%;
     }
     iframe {
-      width: 100px;
+      width: 50%;
       height: 50px; /* or any other value that suits your needs */
     }
   }
