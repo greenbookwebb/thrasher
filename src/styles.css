@@ -34,6 +34,21 @@ div {
     grid-gap: 40px;
     padding: 40px;
   }
+
+  @media (max-width: 767px) {
+    .container {
+      grid-gap: 20px;
+      display: block;
+      
+    }
+    img {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+    }
+  }
+
+
   
   .box {
     
