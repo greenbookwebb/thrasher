@@ -1,8 +1,10 @@
-# Getting Started with Create React App
+# Thrasher
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Thrasher is a website that is designed to be the one-stop spot to see what songs Triple M is currently Thrashing across the east coast!
+Below you'll see the songs which Triple M is currently thrashing.
+At the bottom of the page, you'll see the leaderboard as to the Artists which have been the most Thrashed since 12:23pm, 15 February, 2023!
 
-## Available Scripts
+# This is a react app, so:
 
 In the project directory, you can run:
 
